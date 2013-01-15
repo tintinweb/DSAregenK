@@ -5,13 +5,23 @@ Recover the private key from signed DSA messages with weak coefficient 'k'.
 The coefficient is considered weak if 'k' is not unique and not totally random for all signed messages. 
 
 Given two+ signed message hashes h(mA),h(mB) with signatures (rA,sA) and (rB,sB) where rA==rB and shared public_key 
-coefficients (at least modulus q) one can reconstruct the private key that was used to sign these messages.
+coefficients (at least subprime q) one can reconstruct the private key that was used to sign these messages.
 
 
 DSA Signature (r,s):
 
 	r = g^k mod p mod q
 	s = k-1 (H(m) + x*r) mod q
+	
+	x 	... private exponent
+	y	... public exponent
+	H()	... hash function
+	m	... message
+	g	... group generator
+	p	... prime
+	q	... subprime
+	r,s	... digital signature components
+	k	... per message secret number
 
 
 
