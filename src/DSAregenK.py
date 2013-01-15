@@ -35,19 +35,32 @@ class DSAregenK(object):
         
         
         self.samples[r].append(sample)
-        LOG.debug("+ added: sample = %s"%repr(sample))
+        #LOG.debug("+ added: sample = %s"%repr(sample))
     
     
     def run(self,asDSAobj=False):
         # find samples with equal r in signature
         for c in self._find_candidates():
-            LOG.debug("reconstructing PrivKey for Candidate r=%s"%c)
+            LOG.debug("[*] reconstructing PrivKey for Candidate r=%s"%c)
             (k,x) = self._attack(self.samples[c])
             if asDSAobj:
                 yield self._construct_DSA((k,x))
             else:
                 yield (k,x)
-    
+                
+    def runBrute(self,asDSAobj=False,maxTries=None):
+        for r,sample in self.samples.iteritems():
+            LOG.debug("[*] bruteforcing PrivKey for r=%s"%r)
+            sample=sample[0]
+            try:
+                (k,x) = self._brute_k(sample,maxTries=maxTries)
+                if asDSAobj:
+                    yield self._construct_DSA((k,x))
+                else:
+                    yield (k,x)
+            except Exception, e:
+                logging.error(e.message)
+                
     def _find_candidates(self):
         '''
             candidates have same r
@@ -55,7 +68,6 @@ class DSAregenK(object):
         candidates = []
         for r, vals in self.samples.iteritems():
             if len(vals)>1: 
-                LOG.debug("+ found candidate: %s"%r)
                 candidates.append(r)
         return candidates
     
@@ -101,3 +113,29 @@ class DSAregenK(object):
         k = (hA - hB)* inverse(sA -sB,q) %q
         x = ((k*sA-hA)* inverse( rA,q) )% q
         return k,x
+    
+    
+    def _brute_k(self,sample,p=None,q=None,g=None,maxTries=None):
+        '''
+            sample = (r,s,h(m))
+        '''
+        # 1 < k < q
+        p = p or self.pubkey.p
+        q = q or self.pubkey.q
+        g = g or self.pubkey.g
+        
+        r,s,h = sample
+        
+        k= 2
+        while k< q-1:
+            if maxTries and k >= maxTries+2:
+                break
+            # calc r = g^k mod p mod q
+            if r == pow(g,k,p)%q: 
+                x = ((k*s-h)* inverse( r,q) )% q
+                return k,x
+            k+=1        #next k
+        raise Exception("Max tries reached! - %d/%d"%(k-2,maxTries))
+
+            
+            

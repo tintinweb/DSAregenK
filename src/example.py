@@ -39,7 +39,7 @@ if __name__=="__main__":
     #
     k = random.StrongRandom().randint(1, secret_key2.q-1)
     m5 =  signMessage(secret_key2,"xxx This is a signed message!",k) 
-    m6 =  signMessage(secret_key2,"xxx Another signed Message - I am the only one that may sign these messages :)",k=0xffeeffee) 
+    m6 =  signMessage(secret_key2,"xxx Another signed Message - I am the only one that may sign these messages :)",k=0xaf) 
     m7 =  signMessage(secret_key2,"xxx Another signed xxxMessage - I am the only one that may sign these messages :)",k)
     m8 =  signMessage(secret_key2,"xxx Another signed xxxxxxMessage - I am the only one that may sign these messages :)")  
     #
@@ -65,7 +65,7 @@ if __name__=="__main__":
     #  Begin ATTACK Code :)
     #
     # ============================================================
-    LOG.debug(" -- Attacking weak coefficient 'k' -- ")  
+    LOG.debug(" -- #1     Attacking weak coefficient 'k' -- ")  
     for data in datasets:
         pubkey = pubkey=data[0][3]          # grab pubkey
         a = DSAregenK(pubkey=pubkey)        # feed DSAregen 
@@ -74,7 +74,24 @@ if __name__=="__main__":
             
         for re_privkey in a.run(asDSAobj=True):     # reconstruct privatekey from samples (needs at least 2 signed messages with equal r param)
             if re_privkey.x in privkeys:            # compare regenerated privkey with one of the original ones (just a quick check :))
-                LOG.info( "Successfully reconstructed private_key: %s"%repr(re_privkey))
+                LOG.info( "Successfully reconstructed private_key: %s | x=%s"%(repr(re_privkey),re_privkey.x))
             else:
                 LOG.error("Something went wrong :( %s"%repr(re_privkey))
+            LOG.debug("----------------------------------------------------------")
+                
+                
+    LOG.debug(" -- #2     Bruteforcing weak 'small' coefficient 'k' -- ") 
+    for data in datasets:
+        pubkey = pubkey=data[0][3]          # grab pubkey
+        a = DSAregenK(pubkey=pubkey)        # feed DSAregen 
+        for m,h,(r,s),pubkey in data:       # add sample data (message,hash,(signature)) to DSAregen
+            a.add( (r,s),h )
+
+        for re_privkey in a.runBrute(asDSAobj=True,maxTries=256):     # reconstruct privatekey from samples (needs at least 2 signed messages with equal r param)
+            if re_privkey.x in privkeys:            # compare regenerated privkey with one of the original ones (just a quick check :))
+                LOG.info( "Successfully brute_forced private_key: %s | x=%s"%(repr(re_privkey),re_privkey.x))
+            else:
+                LOG.error("Something went wrong :( %s"%repr(re_privkey))
+            LOG.debug("----------------------------------------------------------")
             
+    LOG.debug("--- END ---")
