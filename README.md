@@ -1,11 +1,11 @@
 DSAregenK
 =========
 
-Recover the private key from signed DSA messages with weak coefficient 'k'. 
+Recover the private key of signed DSA messages with weak coefficient 'k'. 
 The coefficient is considered weak if 'k' is 
 * not unique for all signed messages
 * not randomly selected for all signed messages
-* too small (brute_force)
+* small enough to make brute_force feasable
 
 
 DSA Signature (r,s):
@@ -28,7 +28,7 @@ Modus #1 - 'k' is not unique for all signed messages
 --------
 
 Given two+ signed message hashes h(mA),h(mB) with signatures (rA,sA) and (rB,sB) where rA==rB and shared public_key 
-coefficients (at least subprime q) one can reconstruct the private key that was used to sign these messages.
+coefficients (at least subprime q) one can reconstruct the private key used to sign these messages.
 
 DSAregenK().run() - will try to find duplicate 'r' and reconstruct the private_key. just feed as many (sig),hash tuples as you want ( .add())
 
@@ -49,6 +49,7 @@ Modus #2 - 'k' is a weak small number (or within a range of numbers)
 
 If we manage to find a 'k' so that g^k mod p mod q == 'r' we can reconstruct the private_key 'x'. Remember 'g' is part of the public_key.
 
+Benchmark: 2^15 trials will take less than 3mins on heavily loaded Intel Core2Duo @ 2.5GHz, 32bit python. (related: [Debian PRNG Issue](http://www.debian.org/security/2008/dsa-1571))
 
 DSAregenK().runBrute() - will try to find a matching 'k' and reconstruct the private_key. just feed as many (sig),hash tuples as you want ( .add()).
 
@@ -69,19 +70,20 @@ Code: (use runBrute() or _brute_k())
 Prerequesites:
 =============
 
-In order to reconstruct the private_key from signed DSA message you need to have:
+In order to reconstruct the private_key of signed DSA messages you need to have:
 
 * public_key parameters q [,y,g,p]
 * a signed message consisting of: 
   * h(m) ... hashed message 
   * (r,s)... signature
-* at least two messages with equal 'r'
+* [modus #1] at least two messages with equal 'r'
+* [modus #2] at least one message with weak 'k' (small value or within a smaller range since we're bruteforcing 'k')
 
 
 Example:
 =========
 
-See example.py for another example using PyCrypto's DSA
+See example.py
 
 Code:
 
