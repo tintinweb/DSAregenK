@@ -1,12 +1,17 @@
 DSAregenK
 =========
 
-Recover the private key from signed DSA messages. (multiple signed messages, static coefficient 'k')
+Recover the private key from signed DSA messages with weak coefficient 'k'. 
+The coefficient is considered weak if 'k' is not unique and not totally random for all signed messages. 
 
-Dependencies:
-=============
+Given two+ signed message hashes h(mA),h(mB) with signatures (rA,sA) and (rB,sB) where rA==rB and shared public_key 
+coefficients (at least modulus q) one can reconstruct the private key that was used to sign these messages.
 
-* [PyCrypto](https://www.dlitz.net/software/pycrypto/)
+
+DSA Signature (r,s):
+
+	r = g^k mod p mod q
+	s = k-1 (H(m) + x*r) mod q
 
 
 
@@ -72,6 +77,13 @@ Output:
 	DEBUG:DSAregenK:privkey reconstructed: k=878142112336661011841646506798327227196069455298; x=1250118052601756091309216076961251244612791072328;
 	INFO:DSAregenK:Successfully reconstructed private_key: <_DSAobj @0x239a940 y,g,p(1024),q,x,private>
 	
+
+Dependencies:
+=============
+
+* [PyCrypto](https://www.dlitz.net/software/pycrypto/)
+
+
 
 More Infos:
 ===========
