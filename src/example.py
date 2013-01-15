@@ -42,6 +42,8 @@ if __name__=="__main__":
     m6 =  signMessage(secret_key2,"xxx Another signed Message - I am the only one that may sign these messages :)",k=0xaf) 
     m7 =  signMessage(secret_key2,"xxx Another signed xxxMessage - I am the only one that may sign these messages :)",k)
     m8 =  signMessage(secret_key2,"xxx Another signed xxxxxxMessage - I am the only one that may sign these messages :)")  
+    print m7,m7[3].q,m7[3].g,k,m7[3].p
+
     #
     # --- organize testset data ---
     #
