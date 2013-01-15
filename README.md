@@ -75,13 +75,14 @@ In order to reconstruct the private_key from signed DSA message you need to have
 * a signed message consisting of: 
   * h(m) ... hashed message 
   * (r,s)... signature
-* at least two messages with equal 'r'
+* [modus #1] at least two messages with equal 'r'
+* [modus #2] at least one message with weak 'k' (small value or within a smaller range since we're bruteforcing 'k')
 
 
 Example:
 =========
 
-See example.py for another example using PyCrypto's DSA
+See example.py
 
 Code:
 
