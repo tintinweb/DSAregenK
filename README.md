@@ -1,7 +1,7 @@
 DSAregenK
 =========
 
-Recover the private key from signed DSA messages with weak coefficient 'k'. 
+Recover the private key of signed DSA messages with weak coefficient 'k'. 
 The coefficient is considered weak if 'k' is 
 * not unique for all signed messages
 * not randomly selected for all signed messages
@@ -28,7 +28,7 @@ Modus #1 - 'k' is not unique for all signed messages
 --------
 
 Given two+ signed message hashes h(mA),h(mB) with signatures (rA,sA) and (rB,sB) where rA==rB and shared public_key 
-coefficients (at least subprime q) one can reconstruct the private key that was used to sign these messages.
+coefficients (at least subprime q) one can reconstruct the private key used to sign these messages.
 
 DSAregenK().run() - will try to find duplicate 'r' and reconstruct the private_key. just feed as many (sig),hash tuples as you want ( .add())
 
@@ -69,7 +69,7 @@ Code: (use runBrute() or _brute_k())
 Prerequesites:
 =============
 
-In order to reconstruct the private_key from signed DSA message you need to have:
+In order to reconstruct the private_key of signed DSA messages you need to have:
 
 * public_key parameters q [,y,g,p]
 * a signed message consisting of: 
