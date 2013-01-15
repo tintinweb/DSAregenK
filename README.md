@@ -25,6 +25,8 @@ In order to reconstruct the private_key from signed DSA message you need to have
 Example:
 =========
 
+See example.py for another example using PyCrypto's DSA
+
 Code:
 
 	from Crypto.Random import random
@@ -35,22 +37,25 @@ Code:
 	
 	import logging
 	LOG = logging.getLogger('DSAregenK')
-    LOG.setLevel(logging.DEBUG)
-    logging.debug("-- on --")	
+	LOG.setLevel(logging.DEBUG)
+	logging.debug("-- on --")    
 	
-	privKey = DSA.generate(1024)		# generate new privkey
-	pubKey  = privKey.publickey()		# extract pubkey
-
-    a = DSAregenK(pubkey=pubkey)        # feed pubkey 
-
-    a.add( (r1,s2),h1 )					# add signed messages
-    a.add( (r2,s2),h2 )					# add signed messages
-        
-    for re_privkey in a.run(asDSAobj=True):     # reconstruct privatekey from samples (needs at least 2 signed messages with equal r param)
-        if re_privkey.x in privkeys:            # compare regenerated privkey with one of the original ones (just a quick check :))
-            LOG.info( "Successfully reconstructed private_key: %s"%repr(re_privkey))
-        else:
-            LOG.error("Something went wrong :( %s"%repr(re_privkey))
+	privkey = DSA.generate(1024)        # generate new privkey
+	pubkey  = privkey.publickey()        # extract pubkey
+	
+	(r1,s1,h1)=(1104242600137843543695045937637417281163059700235L, 773789011712632302915807023844906579969862952621L, 857395097640348327305744475401170640455782257516L)
+	(r2,s2,h2)=(1104242600137843543695045937637417281163059700235L, 684267073985982683308089132980132594478002742693L, 199515072252589500574227853970213073102209507294L)
+	
+	a = DSAregenK(pubkey=pubkey)        # feed pubkey 
+	
+	a.add( (r1,s1),h1 )                    # add signed messages
+	a.add( (r2,s2),h2 )                    # add signed messages
+	    
+	for re_privkey in a.run(asDSAobj=True):     # reconstruct privatekey from samples (needs at least 2 signed messages with equal r param)
+	    if re_privkey.x == privkey.x:           # compare regenerated privkey with one of the original ones (just a quick check :))
+	        LOG.info( "Successfully reconstructed private_key: %s"%repr(re_privkey))
+	    else:
+	        LOG.error("Something went wrong :( %s"%repr(re_privkey))
             
 
 Output:
