@@ -5,7 +5,7 @@ Recover the private key of signed DSA messages with weak coefficient 'k'.
 The coefficient is considered weak if 'k' is 
 * not unique for all signed messages
 * not randomly selected for all signed messages
-* too small to make brute_force feasable
+* small enough to make brute_force feasable
 
 
 DSA Signature (r,s):
