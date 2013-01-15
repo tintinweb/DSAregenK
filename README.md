@@ -49,6 +49,7 @@ Modus #2 - 'k' is a weak small number (or within a range of numbers)
 
 If we manage to find a 'k' so that g^k mod p mod q == 'r' we can reconstruct the private_key 'x'. Remember 'g' is part of the public_key.
 
+Benchmark: 2^15 trials will take less than 3mins on heavily loaded Intel Core2Duo @ 2.5GHz, 32bit python. (related: [Debian PRNG Issue](http://www.debian.org/security/2008/dsa-1571) limited prng space typically to ~ 2^15)
 
 DSAregenK().runBrute() - will try to find a matching 'k' and reconstruct the private_key. just feed as many (sig),hash tuples as you want ( .add()).
 
