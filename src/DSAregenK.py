@@ -49,17 +49,18 @@ class DSAregenK(object):
                 yield (k,x)
                 
     def runBrute(self,asDSAobj=False,maxTries=None):
-        for r,sample in self.samples.iteritems():
+        for r,samples in self.samples.iteritems():
             LOG.debug("[*] bruteforcing PrivKey for r=%s"%r)
-            sample=sample[0]
-            try:
-                (k,x) = self._brute_k(sample,maxTries=maxTries)
-                if asDSAobj:
-                    yield self._construct_DSA((k,x))
-                else:
-                    yield (k,x)
-            except Exception, e:
-                logging.error(e.message)
+            for sample in samples:
+                LOG.debug("[** - sample for r=%s]"%r)
+                try:
+                    (k,x) = self._brute_k(sample,maxTries=maxTries)
+                    if asDSAobj:
+                        yield self._construct_DSA((k,x))
+                    else:
+                        yield (k,x)
+                except Exception, e:
+                    logging.error(e.message)
                 
     def _find_candidates(self):
         '''
